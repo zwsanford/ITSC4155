@@ -1,0 +1,19 @@
+<%- include('../partials/header.ejs')%>
+<main class="item-details">
+    <div class = "item-image">
+        <img src = "<%=listing.image%>" alt="<%=listing.title%> image">
+    </div>
+
+    <div class="item-info">
+        <h2><%=listing.title%></h2>
+        <p>Condition: <%=listing.condition%></p>
+        <p>Price: $<%=listing.price%> | <%=listing.totalOffers%> offers</p>
+        <p>Seller: <%=listing.seller%></p>
+        <p><%=listing.details%></p>
+        <form>
+            <button type = "submit" formmethod = "GET" formaction="/listings/<%=listing.id%>/edit">Edit</button>
+            <button type = "submit" formmethod = "POST" formaction="/listings/<%=listing.id%>?_method=DELETE">Delete</button>
+        </form>
+    </div>
+</main>
+<%- include('../partials/footer.ejs')%>
