@@ -9,6 +9,6 @@ router.get('/signup', controller.signup);
 
 router.post('/', controller.create);
 
-// router.get('/', controller.logged);
+router.post('/check', controller.logged);
 
 module.exports = router

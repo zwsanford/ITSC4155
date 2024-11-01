@@ -12,7 +12,7 @@ exports.signup = (req, res)=>{
 exports.create = (req, res, next)=>{
     let account = new model(req.body);
     account.save()
-        .then(listing => res.redirect('/accounts/login'))
+        .then(account => res.redirect('/accounts/login'))
         .catch(err => {
             if (err.name === 'ValidationError') {
                 err.status = 400;
@@ -21,7 +21,14 @@ exports.create = (req, res, next)=>{
         });
 }
 
-// exports.logged = (req, res, next)=>{
-//     let account = new model(req.body);
-//     if(account)
-// }
+exports.logged = (req, res, next)=>{
+    let account = req.body;
+    
+    if(!account.username.find(username) && !account.password.find(password)){
+        let err = new Error('Invalid username or password');
+        err.status = 400;
+        return next(err);
+    }
+    res.render('./account/signup');
+    
+}

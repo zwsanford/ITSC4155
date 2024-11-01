@@ -2,18 +2,19 @@
 <main class="signup-page">
     <div class="form-container">
         <h2>Sign Up</h2>
-        <form action="/accounts" method="POST" class="signup-form" enctype="multipart/form-data">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
-
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
-
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-
-            <button type="submit" class="submit-btn">Submit</button>
-        </form>
+        
     </div>
+    <form action="/accounts" method="POST" class="form-container" >
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="email">Email</label>
+        <input type="text" id="email" name="email" required>
+
+        <label for="password">Password</label>
+        <input type="text" id="password" name="password" required>
+
+        <button type="submit" class="submit-btn">Submit</button>
+    </form>
 </main>
 <%- include('../partials/footer.ejs') %>
