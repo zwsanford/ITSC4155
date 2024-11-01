@@ -24,20 +24,21 @@ exports.new = (req, res)=>{
     res.render('./listing/new');
 };
 
-exports.create = (req, res)=>{
+exports.create = (req, res, next) => {
     let listing = new model(req.body);
-    if(req.file){
+    if (req.file) {
         listing.image = "/images/" + req.file.filename;
     }
     listing.save()
-    .then(listing=>res.redirect('/listings'))
-    .catch(err=>{
-        if(err.name === 'ValidationError'){
-            err.status = 400;
-        }
-        next(err);
-    }); 
+        .then(listing => res.redirect('/listings'))
+        .catch(err => {
+            if (err.name === 'ValidationError') {
+                err.status = 400;
+            }
+            next(err); 
+        });
 };
+
 
 exports.show = (req, res, next)=>{
     let id = req.params.id;
