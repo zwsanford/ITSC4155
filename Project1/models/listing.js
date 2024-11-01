@@ -1,80 +1,19 @@
-const {v4: uuidv4} = require('uuid');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const listings = [
-    {
-        id: '1',
-        title: 'Blue Couch',
-        seller:'Harrison H',
-        condition:'Like New',
-        price: 135.00,
-        details:'Couch I owned for the semester, cant wait to get rid of it',
-        image:'/images/couch.jpg',
-        totalOffers: 2,
-        active: true
+const listingSchema = new Schema({
+    title: {type: String, required: [true, 'title is required']},
+    seller: {type: String, required: [true, 'seller is required']},
+    condition: {type: String, required: [true, 'Condition is required'], enum: ['New', 'Like New', 'Good', 'Fair', 'Poor']},
+    price: {type: Number, required: [true, 'price is required'], min: 0.01},
+    details: {type: String, required: [true, 'details is required'], minLength: [10, 'the details describing the Listing should be at least 10 characters']},
+    image: {type: String, required: [true, 'image is required']},
+    totalOffers: {type: Number, default: 0},
+    active: {type: Boolean, default: true}
+});
 
-    },
-    {
-        id: '2',
-        title: 'Ping Pong table',
-        seller:'Jacob Y',
-        condition:'Like New',
-        price: 50.00,
-        details:'Bought it to play pong and only used once, pls take off me',
-        image:'/images/PingPong.jpg',
-        totalOffers: 4,
-        active: true
-        
-    },
-    {
-        id: '3',
-        title: 'Record Player',
-        seller:'Mary S',
-        condition:'New',
-        price: 25.00,
-        details:'Never ended up buying records for it so never used',
-        image:'/images/RecordPlayer.jpg',
-        totalOffers: 0,
-        active: true
-        
-    },
-    {
-        id: '4',
-        title: 'Electric Scooter',
-        seller:'Ryan P',
-        condition:'Fair',
-        price: 180.00,
-        details:'Used this for 3 years, gets up to 15 mph and battery lasts like 8 hours, graduating so dont need it anymore, great for getting around campus!',
-        image:'/images/ElectricScooter.jpg',
-        totalOffers: 1,
-        active: true
-        
-    },
-    {
-        id: '5',
-        title: 'Ikea Chair',
-        seller:'Harrison H',
-        condition:'Fair',
-        price: 20.00,
-        details:'Ikea chair I had for my desk but cant take back home with me, no marks just used',
-        image:'/images/IkeaChair.jpg',
-        totalOffers: 2,
-        active: true
-        
-    },
-    {
-        id: '6',
-        title: 'Stussy Winter puffer',
-        seller:'Kaci B',
-        condition:'Like New',
-        price: 200.00,
-        details:'Stussy puffer, used somewhat but no stains or anything like that, wont need this where im going...CANCUNNNN',
-        image:'/images/StussyPuffer.jpg',
-        totalOffers: 2,
-        active: true
-        
-    },
-   
-];
+module.exports = mongoose.model('Listing', listingSchema);
+
 
 exports.find = function(search){
     let sortlistings = listings.sort((a, b)=>a.price - b.price);
