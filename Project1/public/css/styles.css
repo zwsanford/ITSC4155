@@ -17,7 +17,7 @@
     box-sizing: border-box;
 }
 
-/* Ensure the body and html take up full height and use flex layout */
+/* Ensure body and html take up full height and use flex layout */
 body, html {
     height: 100%;
     display: flex;
@@ -100,15 +100,28 @@ body, html {
     color: var(--clr-white);
 }
 
+/* Ensure the footer spans the full viewport width and is centered */
 .footer {
+    width: 100vw; /* Full viewport width */
+    padding: 1rem 2rem;
+    margin: 0 auto;
     background-color: var(--clr-neutral);
     color: var(--clr-white);
-    padding: 1rem 2rem;
     display: flex;
     justify-content: center;
     align-items: center;
     border-top: 1px solid var(--clr-primary);
+    box-sizing: border-box; /* Prevent padding from affecting width */
 }
+
+/* Remove any body or html margin that could cause gaps */
+body, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden; /* Prevent horizontal scrolling due to 100vw */
+}
+
 
 .footer-content {
     display: flex;
