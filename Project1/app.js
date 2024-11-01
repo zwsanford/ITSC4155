@@ -3,6 +3,7 @@ const express = require('express');
 const morgan = require('morgan');
 const methodOverride = require('method-override');
 const listingRoutes = require('./routes/listingRoutes');
+const accountRoutes = require('./routes/accountRoutes');
 const mongoose = require('mongoose');
 const {upload} = require('./middleware/fileUpload')
 
@@ -41,6 +42,9 @@ app.get('/', (req, res)=>{
 });
 
 app.use('/listings', listingRoutes);
+
+app.use('/accounts', accountRoutes);
+
 
 app.use((req, res, next)=>{
     let err = new Error('The server cannot locate ' + req.url);
