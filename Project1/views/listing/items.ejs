@@ -1,20 +1,21 @@
-<%- include('../partials/header.ejs')%>
-    <main class = "item-listings">
-            <%if (listings.length){%>
-                <%listings.forEach(listing=>{%>
-                    <div class = "item">
-                    <a href = "/listings/<%= listing.id%>">
-                        <img src = "<%=listing.image%>" alt="<%=listing.title%> image">
-                        <h4><%=listing.title%></h4>
-                        <h6><%=listing.condition%></h6>
-                        <h4>$<%=listing.price%></h4>
-                        <h5><%=listing.totalOffers%> offers</h5>
-                    </a>
+<%- include('../partials/header.ejs') %>
+<main class="item-listings">
+    <% if (listings.length) { %>
+        <% listings.forEach(listing => { %>
+            <div class="item card">
+                <a href="/listings/<%= listing.id %>">
+                    <img src="<%= listing.image %>" alt="<%= listing.title %> image" class="item-image">
+                    <div class="item-info">
+                        <h4><%= listing.title %></h4>
+                        <p><%= listing.condition %></p>
+                        <h4>$<%= listing.price %></h4>
+                        <p><%= listing.totalOffers %> offers</p>
                     </div>
-                <%});
-            }else{%>
-                <p>There are no listings to display.</p>
-            <%}%>
-        </div>
-    </main>
-<%- include('../partials/footer.ejs')%>
+                </a>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <p>There are no listings to display.</p>
+    <% } %>
+</main>
+<%- include('../partials/footer.ejs') %>

@@ -1,19 +1,22 @@
-<%- include('../partials/header.ejs')%>
-<main class="item-details">
-    <div class = "item-image">
-        <img src = "<%=listing.image%>" alt="<%=listing.title%> image">
+<%- include('../partials/header.ejs') %>
+<main class="item-details container">
+    <div class="item-image">
+        <img src="<%= listing.image %>" alt="<%= listing.title %> image" class="item-photo">
     </div>
 
     <div class="item-info">
-        <h2><%=listing.title%></h2>
-        <p>Condition: <%=listing.condition%></p>
-        <p>Price: $<%=listing.price%> | <%=listing.totalOffers%> offers</p>
-        <p>Seller: <%=listing.seller%></p>
-        <p><%=listing.details%></p>
-        <form>
-            <button type = "submit" formmethod = "GET" formaction="/listings/<%=listing.id%>/edit">Edit</button>
-            <button type = "submit" formmethod = "POST" formaction="/listings/<%=listing.id%>?_method=DELETE">Delete</button>
-        </form>
+        <h2><%= listing.title %></h2>
+        <p><strong>Condition:</strong> <%= listing.condition %></p>
+        <p><strong>Price:</strong> $<%= listing.price %> | <%= listing.totalOffers %> offers</p>
+        <p><strong>Seller:</strong> <%= listing.seller %></p>
+        <p><%= listing.details %></p>
+        
+        <div class="button-group">
+            <form>
+                <button type="submit" formmethod="GET" formaction="/listings/<%= listing.id %>/edit" class="edit-btn">Edit</button>
+                <button type="submit" formmethod="POST" formaction="/listings/<%= listing.id %>?_method=DELETE" class="delete-btn">Delete</button>
+            </form>
+        </div>
     </div>
 </main>
-<%- include('../partials/footer.ejs')%>
+<%- include('../partials/footer.ejs') %>
