@@ -1,15 +1,16 @@
-<%- include('../partials/header.ejs')%>
-    <main class="Login-Page">
-        <div>
-            <form action="/accounts" method="POST" class="Login-Form" enctype="multipart/form-data">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+<%- include('../partials/header.ejs') %>
+<main class="login-page">
+    <div class="form-container">
+        <h2>Login</h2>
+        <form action="/accounts" method="POST" class="login-form" enctype="multipart/form-data">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
 
-                <label for="password">Password</label>
-                <input type="text" id="password" name="password" required>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
 
-                <button type="submit">Submit</button>
-            </form>
-        </div>
-    </main>
-<%- include('../partials/footer.ejs')%>
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+</main>
+<%- include('../partials/footer.ejs') %>
