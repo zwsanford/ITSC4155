@@ -3,6 +3,9 @@ const express = require('express');
 const morgan = require('morgan');
 const methodOverride = require('method-override');
 const listingRoutes = require('./routes/listingRoutes');
+const mongoose = require('mongoose');
+const {upload} = require('./middleware/fileUpload')
+
 
 
 //create app
@@ -12,7 +15,17 @@ const app = express();
 //configure app
 let port = 4000;
 let host = 'localhost';
+let url = "mongodb://localhost:27017/NinerBay";
 app.set('view engine', 'ejs');
+
+//connect to database
+mongoose.connect(url)
+.then(()=>{
+    app.listen(port, host, ()=>{
+        console.log('Server is running on port', port);
+    });
+})
+.catch(err=>console.log(err.message));
 
 
 //mount middleware
@@ -43,8 +56,3 @@ app.use((err, req, res, next)=>{
     res.status(err.status);
     res.render('error', {error:err});
 });
-
-//start the server
-app.listen(port, host, ()=>{
-    console.log('Server is running on port', port);
-})
