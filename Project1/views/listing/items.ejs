@@ -4,7 +4,11 @@
         <% listings.forEach(listing => { %>
             <div class="item card">
                 <a href="/listings/<%= listing.id %>">
-                    <img src="<%= listing.image %>" alt="<%= listing.title %> image" class="item-image">
+                    <% if (listing.imageUrl) { %>
+                        <img src="<%= listing.imageUrl %>" alt="<%= listing.title %> image" class="item-image">
+                    <% } else { %>
+                        <p>No image available</p>
+                    <% } %>
                     <div class="item-info">
                         <h4><%= listing.title %></h4>
                         <p><%= listing.condition %></p>

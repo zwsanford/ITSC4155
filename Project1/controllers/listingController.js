@@ -12,6 +12,14 @@ export const newListing = (req, res) => {
 export const index = async (req, res, next) => {
   try {
     const listings = await Listing.find().sort({ price: 1 });
+
+    // Generate signed URLs for each listing's image
+    for (let listing of listings) {
+      if (listing.image && listing.image.s3Key) {
+        listing.imageUrl = await getFileUrl(listing.image.s3Key); // Attach the signed URL
+      }
+    }
+
     res.render('listing/items', { listings });
   } catch (err) {
     next(err);
