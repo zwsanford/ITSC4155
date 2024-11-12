@@ -1,20 +1,27 @@
-const express = require('express');
-const controller = require('../controllers/listingController');
+// routes/listingRoutes.js
+import express from 'express';
+import {
+  create,
+  show,
+  edit,
+  deleteListing,
+} from '../controllers/listingController.js';
+import { fileUpload } from '../middleware/fileUpload.js';
+
 const router = express.Router();
-const {fileUpload} = require('../middleware/fileUpload')
+// Create a new listing with file upload
+router.post('/', fileUpload, create);
 
-router.get('/', controller.index);
+// Show a specific listing
+router.get('/:id', show);
 
-router.get('/new', controller.new);
+// Edit a listing
+router.get('/:id/edit', edit);
 
-router.post('/', fileUpload,controller.create);
+// Update a listing with file upload
+router.put('/:id', fileUpload, edit);
 
-router.get('/:id', controller.show);
+// Delete a listing
+router.delete('/:id', deleteListing);
 
-router.get('/:id/edit', controller.edit);
-
-router.put('/:id', fileUpload,controller.update);
-
-router.delete('/:id', controller.delete);
-
-module.exports = router
+export default router;

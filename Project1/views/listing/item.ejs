@@ -1,7 +1,11 @@
 <%- include('../partials/header.ejs') %>
 <main class="item-details container">
     <div class="item-image">
-        <img src="<%= listing.image %>" alt="<%= listing.title %> image" class="item-photo">
+        <% if (listing.image && listing.image.url) { %>
+            <img src="<%= listing.image.url %>" alt="<%= listing.title %> image" class="item-photo">
+        <% } else { %>
+            <p>No image available</p>
+        <% } %>
     </div>
 
     <div class="item-info">

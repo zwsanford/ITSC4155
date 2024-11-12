@@ -1,137 +1,127 @@
-const model = require('../models/listing');
+// Import necessary modules
+import Listing from '../models/listing.js';
+import { getFileUrl, deleteFile } from '../middleware/fileUpload.js';
 
-exports.index = (req, res, next) => {
-    let search = req.query.search; // Get the search query from request query parameters
-    let query = {}; // Define an empty query object
+// Create a new listing with image upload
+export const create = async (req, res, next) => {
+  try {
+    const listingData = req.body;
 
-    if (search) {
-        // If search query exists, define a MongoDB query to search for titles or details containing the search string
-        query = {
-            $or: [
-                { title: { $regex: search, $options: 'i' } }, // Case-insensitive search for title
-                { details: { $regex: search, $options: 'i' } } // Case-insensitive search for details
-            ]
-        };
+    if (req.file && req.file.s3Key) {
+      listingData.image = {
+        s3Key: req.file.s3Key,
+        format: req.file.mimetype.split('/')[1],
+        size: req.file.size,
+      };
+    } else {
+      const err = new Error('Image is required');
+      err.status = 400;
+      return next(err);
     }
 
-    // Use the find method of the listing model to search for listings based on the query and sort by price ascending
-    model.find(query).sort({price:1})
-    .then(listings=>res.render('./listing/items', {listings}))
-    .catch(err=>next(err));
-};
-
-exports.new = (req, res)=>{
-    res.render('./listing/new');
-};
-
-exports.create = (req, res, next) => {
-    let listing = new model(req.body);
-    if (req.file) {
-        listing.image = "/images/" + req.file.filename;
+    const listing = new Listing(listingData);
+    await listing.save();
+    res.redirect('/listings');
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      err.status = 400;
     }
-    listing.save()
-        .then(listing => res.redirect('/listings'))
-        .catch(err => {
-            if (err.name === 'ValidationError') {
-                err.status = 400;
+    next(err);
+  }
+};
+
+// Show - Display a specific listing with its image URL
+export const show = async (req, res, next) => {
+    const id = req.params.id;
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+        const err = new Error('Invalid listing ID');
+        err.status = 400;
+        return next(err);
+    }
+
+    try {
+        const listing = await Listing.findById(id);
+        if (listing) {
+            if (listing.image && listing.image.s3Key) {
+                listing.image.url = await getFileUrl(listing.image.s3Key); // Generate signed URL
             }
-            next(err); 
-        });
-};
-
-
-exports.show = (req, res, next)=>{
-    let id = req.params.id;
-    if(!id.match(/^[0-9a-fA-F]{24}$/)){
-        let err = new Error('Invalid listing id');
-        err.status = 400;
-        return next(err);
-    }
-    model.findById(id)
-    .then(listing=>{
-        if(listing){
-            return res.render('./listing/item', {listing});
-        }else{
-            let err = new Error('Cannot find a listing with id ' + id);
+            res.render('listing/item', { listing });
+        } else {
+            const err = new Error('Listing not found');
             err.status = 404;
             next(err);
         }
-    })
-    .catch(err=>next(err));
-};
-
-exports.edit = (req, res, next)=>{
-    let id = req.params.id;
-
-    if(!id.match(/^[0-9a-fA-F]{24}$/)){
-        let err = new Error('Invalid listing id');
-        err.status = 400;
-        return next(err);
-    }
-    
-    model.findById(id)
-    .then(listing=>{
-        if(listing){
-            return res.render('./listing/edit', {listing});
-        }else{
-            let err = new Error('Cannot find a listing with id ' + id);
-            err.status = 404;
-            next(err);
-        }
-    })
-    .catch(err=>next(err));
-};
-
-exports.update = (req, res, next)=>{
-    let id = req.params.id;
-
-    if(!id.match(/^[0-9a-fA-F]{24}$/)){
-        let err = new Error('Invalid listing id');
-        err.status = 400;
-        return next(err);
-    }
-    let listing = req.body;
-
-    if(req.file){
-        listing.image = "/images/" + req.file.filename;
-    }
-
-    model.findByIdAndUpdate(id, listing, {new: true})
-    .then(listing=>{
-        if (listing){
-            res.redirect('/listings/'+id);
-        }else{
-            let err = new Error('Cannot find a listing with id ' + id);
-            err.status = 404;
-            next(err);
-        }
-    })
-    .catch(err=>{
-        if(err.name === 'ValidationError'){
-            err.status = 400;
-        }
+    } catch (err) {
         next(err);
-    });
-};
-
-exports.delete = (req, res, next)=>{
-    let id = req.params.id;
-
-    if(!id.match(/^[0-9a-fA-F]{24}$/)){
-        let err = new Error('Invalid listing id');
-        err.status = 400;
-        return next(err);
     }
-
-    model.findByIdAndDelete(id)
-    .then(listing=>{
-        if(listing){
-            res.redirect('/listings');
-        }else{
-            let err = new Error('Cannot find a listing with id ' + id);
-            err.status = 404;
-            return next(err);
-        }
-    })
-    .catch(err=>next(err));
 };
+
+
+// Update a listing with image upload
+export const edit = async (req, res, next) => {
+    const id = req.params.id;
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      const err = new Error('Invalid listing ID');
+      err.status = 400;
+      return next(err);
+    }
+  
+    try {
+      const listingData = req.body;
+      const listing = await Listing.findById(id);
+  
+      if (!listing) {
+        const err = new Error('Listing not found');
+        err.status = 404;
+        return next(err);
+      }
+  
+      // Update image if a new file is uploaded
+      if (req.file && req.file.s3Key) {
+        // Delete the old image from S3
+        if (listing.image && listing.image.s3Key) {
+          await deleteFile(listing.image.s3Key);
+        }
+  
+        listingData.image = {
+          s3Key: req.file.s3Key,
+          format: req.file.mimetype.split('/')[1],
+          size: req.file.size,
+        };
+      }
+  
+      await Listing.findByIdAndUpdate(id, listingData, { new: true });
+      res.redirect(`/listings/${id}`);
+    } catch (err) {
+      if (err.name === 'ValidationError') {
+        err.status = 400;
+      }
+      next(err);
+    }
+};
+  
+// Delete a listing and its image from S3
+export const deleteListing = async (req, res, next) => {
+    const id = req.params.id;
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      const err = new Error('Invalid listing ID');
+      err.status = 400;
+      return next(err);
+    }
+  
+    try {
+      const listing = await Listing.findByIdAndDelete(id);
+      if (listing) {
+        if (listing.image && listing.image.s3Key) {
+          await deleteFile(listing.image.s3Key);
+        }
+        res.redirect('/listings');
+      } else {
+        const err = new Error('Listing not found');
+        err.status = 404;
+        next(err);
+      }
+    } catch (err) {
+      next(err);
+    }
+};  
