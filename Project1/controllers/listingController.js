@@ -2,6 +2,48 @@
 import Listing from '../models/listing.js';
 import { getFileUrl, deleteFile } from '../middleware/fileUpload.js';
 
+
+// New - Display a form to create a new listing
+export const newListing = (req, res) => {
+    res.render('listing/new');
+};
+
+// Index - Show all listings
+export const index = async (req, res, next) => {
+  try {
+    const listings = await Listing.find().sort({ price: 1 });
+    res.render('listing/items', { listings });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Update - Update a specific listing
+export const update = async (req, res, next) => {
+  const id = req.params.id;
+  if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    const err = new Error('Invalid listing ID');
+    err.status = 400;
+    return next(err);
+  }
+
+  const listingData = req.body;
+  if (req.file && req.file.s3Key) {
+    listingData.image = {
+      s3Key: req.file.s3Key,
+      format: req.file.mimetype.split('/')[1],
+      size: req.file.size,
+    };
+  }
+
+  try {
+    await Listing.findByIdAndUpdate(id, listingData, { new: true });
+    res.redirect(`/listings/${id}`);
+  } catch (err) {
+    next(err);
+  }
+};
+
 // Create a new listing with image upload
 export const create = async (req, res, next) => {
   try {

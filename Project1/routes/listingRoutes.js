@@ -1,14 +1,23 @@
 // routes/listingRoutes.js
 import express from 'express';
 import {
-  create,
-  show,
-  edit,
-  deleteListing,
-} from '../controllers/listingController.js';
+    newListing,
+    index,
+    create,
+    show,
+    edit,
+    update,
+    deleteListing,
+}   from '../controllers/listingController.js';
 import { fileUpload } from '../middleware/fileUpload.js';
 
 const router = express.Router();
+
+// Route to get all listings
+router.get('/', index);
+
+router.get('/new', newListing);
+
 // Create a new listing with file upload
 router.post('/', fileUpload, create);
 
@@ -19,7 +28,7 @@ router.get('/:id', show);
 router.get('/:id/edit', edit);
 
 // Update a listing with file upload
-router.put('/:id', fileUpload, edit);
+router.put('/:id', fileUpload, update); // Use the update function
 
 // Delete a listing
 router.delete('/:id', deleteListing);
