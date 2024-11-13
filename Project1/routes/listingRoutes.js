@@ -26,7 +26,7 @@ router.post('/', fileUpload, create);
 // Route to show specific listing
 router.get('/:id', show);
 
-// Route to edit listing
+// Route to edit listing form
 router.get('/:id/edit', edit);
 
 // Route to update listing with file upload

@@ -26,28 +26,53 @@ export const index = async (req, res, next) => {
   }
 };
 
-// change a specific listing
+// update listing with image upload
 export const update = async (req, res, next) => {
   const id = req.params.id;
+  
+  // Check if the ID is valid
   if (!id.match(/^[0-9a-fA-F]{24}$/)) {
     const err = new Error('Invalid listing ID');
     err.status = 400;
     return next(err);
   }
 
-  const listingData = req.body;
-  if (req.file && req.file.s3Key) {
-    listingData.image = {
-      s3Key: req.file.s3Key,
-      format: req.file.mimetype.split('/')[1],
-      size: req.file.size,
-    };
-  }
-
   try {
+    // Fetch the listing document by ID
+    const listing = await Listing.findById(id);
+    if (!listing) {
+      const err = new Error('Listing not found');
+      err.status = 404;
+      return next(err);
+    }
+
+    // Prepare the updated listing data
+    const listingData = { ...req.body };
+
+    // Update image if a new file is uploaded
+    if (req.file && req.file.s3Key) {
+      // Delete the old image from S3
+      if (listing.image && listing.image.s3Key) {
+        await deleteFile(listing.image.s3Key);
+      }
+
+      // Set the new image data
+      listingData.image = {
+        s3Key: req.file.s3Key,
+        format: req.file.mimetype.split('/')[1],
+        size: req.file.size,
+      };
+    }
+
+    // Update the listing document with new data
     await Listing.findByIdAndUpdate(id, listingData, { new: true });
+    
+    // Redirect to the listing's page
     res.redirect(`/listings/${id}`);
   } catch (err) {
+    if (err.name === 'ValidationError') {
+      err.status = 400;
+    }
     next(err);
   }
 };
@@ -106,48 +131,36 @@ export const show = async (req, res, next) => {
     }
 };
 
-
-// update listing with image upload
+// display listing edit form
 export const edit = async (req, res, next) => {
-    const id = req.params.id;
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-      const err = new Error('Invalid listing ID');
-      err.status = 400;
+  const id = req.params.id;
+
+  // Check if the ID format is valid
+  if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    const err = new Error('Invalid listing ID');
+    err.status = 400;
+    return next(err);
+  }
+
+  try {
+    // Fetch the listing by ID
+    const listing = await Listing.findById(id);
+    if (!listing) {
+      const err = new Error('Listing not found');
+      err.status = 404;
       return next(err);
     }
-  
-    try {
-      const listingData = req.body;
-      const listing = await Listing.findById(id);
-  
-      if (!listing) {
-        const err = new Error('Listing not found');
-        err.status = 404;
-        return next(err);
-      }
-  
-      // Update image if a new file is uploaded
-      if (req.file && req.file.s3Key) {
-        // Delete the old image from S3
-        if (listing.image && listing.image.s3Key) {
-          await deleteFile(listing.image.s3Key);
-        }
-  
-        listingData.image = {
-          s3Key: req.file.s3Key,
-          format: req.file.mimetype.split('/')[1],
-          size: req.file.size,
-        };
-      }
-  
-      await Listing.findByIdAndUpdate(id, listingData, { new: true });
-      res.redirect(`/listings/${id}`);
-    } catch (err) {
-      if (err.name === 'ValidationError') {
-        err.status = 400;
-      }
-      next(err);
+
+    // Generate the signed URL for the current image, if it exists
+    if (listing.image && listing.image.s3Key) {
+      listing.imageUrl = await getFileUrl(listing.image.s3Key); // Attach the signed URL
     }
+
+    // Render the edit form and pass the listing data
+    res.render('listing/edit', { listing });
+  } catch (err) {
+    next(err);
+  }
 };
   
 // delete listing and its image from S3

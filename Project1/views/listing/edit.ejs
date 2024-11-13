@@ -1,10 +1,10 @@
 <%- include('../partials/header.ejs') %>
 <main class="edit-page container">
     <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" class="edit-form" enctype="multipart/form-data">
-        
+
         <label for="condition">Condition:</label>
-        <select id="condition" name="condition">
-            <option value="<%= listing.condition %>"><%= listing.condition %></option>
+        <select id="condition" name="condition" required>
+            <option value="<%= listing.condition %>"><%= listing.condition %> (current)</option>
             <option value="New">New</option>
             <option value="Like New">Like New</option>
             <option value="Good">Good</option>
@@ -26,10 +26,16 @@
 
         <label for="image">Current Image:</label>
         <div class="current-image">
-            <img src="<%= listing.image %>" alt="Current listing image">
+            <% if (listing.imageUrl) { %>
+                <img src="<%= listing.imageUrl %>" alt="Current listing image" class="item-image">
+            <% } else { %>
+                <p>No image available</p>
+            <% } %>
         </div>
+
+        <label for="image">Replace Image (optional):</label>
         <input type="file" id="image" name="image" accept="image/*">
-        
+
         <button type="submit" class="submit-btn">Submit</button>
     </form>
 </main>
