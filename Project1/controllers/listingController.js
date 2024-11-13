@@ -1,14 +1,14 @@
-// Import necessary modules
+// import modules
 import Listing from '../models/listing.js';
 import { getFileUrl, deleteFile } from '../middleware/fileUpload.js';
 
 
-// New - Display a form to create a new listing
+// display form for new listing creation
 export const newListing = (req, res) => {
     res.render('listing/new');
 };
 
-// Index - Show all listings
+// show all listings
 export const index = async (req, res, next) => {
   try {
     const listings = await Listing.find().sort({ price: 1 });
@@ -16,7 +16,7 @@ export const index = async (req, res, next) => {
     // Generate signed URLs for each listing's image
     for (let listing of listings) {
       if (listing.image && listing.image.s3Key) {
-        listing.imageUrl = await getFileUrl(listing.image.s3Key); // Attach the signed URL
+        listing.imageUrl = await getFileUrl(listing.image.s3Key);
       }
     }
 
@@ -26,7 +26,7 @@ export const index = async (req, res, next) => {
   }
 };
 
-// Update - Update a specific listing
+// change a specific listing
 export const update = async (req, res, next) => {
   const id = req.params.id;
   if (!id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -52,7 +52,7 @@ export const update = async (req, res, next) => {
   }
 };
 
-// Create a new listing with image upload
+// create new listing with image upload
 export const create = async (req, res, next) => {
   try {
     const listingData = req.body;
@@ -80,7 +80,7 @@ export const create = async (req, res, next) => {
   }
 };
 
-// Show - Display a specific listing with its image URL
+// show listing using image url
 export const show = async (req, res, next) => {
     const id = req.params.id;
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -107,7 +107,7 @@ export const show = async (req, res, next) => {
 };
 
 
-// Update a listing with image upload
+// update listing with image upload
 export const edit = async (req, res, next) => {
     const id = req.params.id;
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -150,7 +150,7 @@ export const edit = async (req, res, next) => {
     }
 };
   
-// Delete a listing and its image from S3
+// delete listing and its image from S3
 export const deleteListing = async (req, res, next) => {
     const id = req.params.id;
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -174,4 +174,4 @@ export const deleteListing = async (req, res, next) => {
     } catch (err) {
       next(err);
     }
-};  
+}; 

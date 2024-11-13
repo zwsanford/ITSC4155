@@ -1,4 +1,4 @@
-// routes/listingRoutes.js
+// import modules
 import express from 'express';
 import {
     newListing,
@@ -11,26 +11,28 @@ import {
 }   from '../controllers/listingController.js';
 import { fileUpload } from '../middleware/fileUpload.js';
 
+// define router
 const router = express.Router();
 
 // Route to get all listings
 router.get('/', index);
 
+// Route for new listing form
 router.get('/new', newListing);
 
-// Create a new listing with file upload
+// Route to create new listing with file upload
 router.post('/', fileUpload, create);
 
-// Show a specific listing
+// Route to show specific listing
 router.get('/:id', show);
 
-// Edit a listing
+// Route to edit listing
 router.get('/:id/edit', edit);
 
-// Update a listing with file upload
-router.put('/:id', fileUpload, update); // Use the update function
+// Route to update listing with file upload
+router.put('/:id', fileUpload, update);
 
-// Delete a listing
+// Route to delete listing
 router.delete('/:id', deleteListing);
 
 export default router;
