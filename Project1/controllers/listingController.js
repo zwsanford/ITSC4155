@@ -10,21 +10,33 @@ export const newListing = (req, res) => {
 
 // show all listings
 export const index = async (req, res, next) => {
-  try {
-    const listings = await Listing.find().sort({ price: 1 });
-
-    // Generate signed URLs for each listing's image
-    for (let listing of listings) {
-      if (listing.image && listing.image.s3Key) {
-        listing.imageUrl = await getFileUrl(listing.image.s3Key);
+    try {
+      const search = req.query.search;
+      let query = {};
+  
+      if (search) {
+        query = {
+          title: { $regex: search, $options: 'i' } // Case-insensitive search for title
+        };
       }
+  
+      // Fetch listings from the database
+      const listings = await Listing.find(query).sort({ price: 1 });
+  
+      // Generate signed URLs for each listing's image
+      for (let listing of listings) {
+        if (listing.image && listing.image.s3Key) {
+          listing.imageUrl = await getFileUrl(listing.image.s3Key); // Attach the signed URL
+        }
+      }
+  
+      // Render the view with listings and search term
+      res.render('listing/items', { listings, search });
+    } catch (err) {
+      console.error('Error in index controller:', err);
+      next(err);
     }
-
-    res.render('listing/items', { listings });
-  } catch (err) {
-    next(err);
-  }
-};
+  };
 
 // update listing with image upload
 export const update = async (req, res, next) => {
