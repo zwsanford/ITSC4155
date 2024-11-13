@@ -1,34 +1,38 @@
-const model = require('../models/account');
+import model from '../models/account.js';
 
-
-exports.login = (req, res)=>{
+const login = (req, res) => {
     res.render('./account/login');
-}
+};
 
-exports.signup = (req, res)=>{
+const signup = (req, res) => {
     res.render('./account/signup');
-}
+};
 
-exports.create = (req, res, next)=>{
-    let account = new model(req.body);
+const create = (req, res, next) => {
+    const account = new model(req.body);
     account.save()
         .then(account => res.redirect('/accounts/login'))
         .catch(err => {
             if (err.name === 'ValidationError') {
                 err.status = 400;
             }
-            next(err); 
+            next(err);
         });
-}
+};
 
-exports.logged = (req, res, next)=>{
-    let account = req.body;
-    
-    if(!account.username.find(username) && !account.password.find(password)){
-        let err = new Error('Invalid username or password');
-        err.status = 400;
-        return next(err);
-    }
-    res.render('./account/signup');
-    
-}
+const logged = (req, res, next) => {
+    const { username, password } = req.body;
+
+    model.findOne({ username, password })
+        .then(account => {
+            if (!account) {
+                const err = new Error('Invalid username or password');
+                err.status = 400;
+                return next(err);
+            }
+            res.render('./account/profile', { account });
+        })
+        .catch(err => next(err));
+};
+
+export default { login, signup, create, logged };

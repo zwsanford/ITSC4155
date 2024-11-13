@@ -1,7 +1,8 @@
-const express = require('express');
-const controller = require('../controllers/accountController');
+import express from 'express';
+import controller from '../controllers/accountController.js';
+import { fileUpload } from '../middleware/fileUpload.js';
+
 const router = express.Router();
-const {fileUpload} = require('../middleware/fileUpload')
 
 router.get('/login', controller.login);
 
@@ -11,4 +12,4 @@ router.post('/', controller.create);
 
 router.post('/check', controller.logged);
 
-module.exports = router
+export default router;

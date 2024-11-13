@@ -1,13 +1,14 @@
-//require modules
-const express = require('express');
-const morgan = require('morgan');
-const methodOverride = require('method-override');
-const listingRoutes = require('./routes/listingRoutes');
-const accountRoutes = require('./routes/accountRoutes');
-const mongoose = require('mongoose');
-const {upload} = require('./middleware/fileUpload')
+//import modules
+import express from 'express';
+import morgan from 'morgan';
+import methodOverride from 'method-override';
+import mongoose from 'mongoose';
+import listingRoutes from './routes/listingRoutes.js';
+import accountRoutes from './routes/accountRoutes.js';
 
-
+// load env variables
+import dotenv from 'dotenv';
+dotenv.config();
 
 //create app
 const app = express();
@@ -16,11 +17,10 @@ const app = express();
 //configure app
 let port = 4000;
 let host = 'localhost';
-let url = "mongodb://localhost:27017/NinerBay";
 app.set('view engine', 'ejs');
 
 //connect to database
-mongoose.connect(url)
+mongoose.connect(process.env.DATABASE_URL)
 .then(()=>{
     app.listen(port, host, ()=>{
         console.log('Server is running on port', port);
