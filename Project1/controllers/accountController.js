@@ -1,15 +1,16 @@
 import model from '../models/account.js';
-
-const login = (req, res) => {
+export const login = (req, res) => {
     res.render('./account/login');
 };
 
-const signup = (req, res) => {
+export const signup = (req, res) => {
     res.render('./account/signup');
 };
 
-const create = (req, res, next) => {
-    const account = new model(req.body);
+export const create = (req, res, next) => {
+    let account = new model(req.body);
+    if(account.email)
+        account.email = account.email.toLowerCase();
     account.save()
         .then(account => res.redirect('/accounts/login'))
         .catch(err => {
@@ -20,7 +21,7 @@ const create = (req, res, next) => {
         });
 };
 
-const logged = (req, res, next) => {
+export const logged = (req, res, next) => {
     const { username, password } = req.body;
 
     model.findOne({ username, password })
