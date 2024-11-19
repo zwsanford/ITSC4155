@@ -15,7 +15,6 @@ const listingSchema = new Schema({
   details: {
     type: String,
     required: [true, 'Details are required'],
-    minLength: [10, 'Details should be at least 10 characters'],
   },
   image: {
     s3Key: { type: String, required: [true, 'Image S3 key is required'] },

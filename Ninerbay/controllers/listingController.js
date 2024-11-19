@@ -189,7 +189,7 @@ export const deleteListing = async (req, res, next) => {
       if (listing) {
         if (listing.image && listing.image.s3Key) {
           await deleteFile(listing.image.s3Key);
-          req.flash('success', 'Your vinyl listing has successfully been deleted!');
+          req.flash('success', 'Your listing has successfully been deleted!');
         }     
         res.redirect('/listings');
       } else {
