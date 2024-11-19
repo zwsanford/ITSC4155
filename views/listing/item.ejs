@@ -1,0 +1,26 @@
+<%- include('../partials/header.ejs') %>
+<main class="item-details container">
+    <div class="item-image">
+        <% if (listing.image && listing.image.url) { %>
+            <img src="<%= listing.image.url %>" alt="<%= listing.title %> image" class="item-photo">
+        <% } else { %>
+            <p>No image available</p>
+        <% } %>
+    </div>
+
+    <div class="item-info">
+        <h2><%= listing.title %></h2>
+        <p><strong>Condition:</strong> <%= listing.condition %></p>
+        <p><strong>Price:</strong> $<%= listing.price %> | <%= listing.totalOffers %> offers</p>
+        <p><strong>Seller:</strong> <%= listing.seller %></p>
+        <p><%= listing.details %></p>
+        
+        <div class="button-group">
+            <form>
+                <button type="submit" formmethod="GET" formaction="/listings/<%= listing.id %>/edit" class="edit-btn">Edit</button>
+                <button type="submit" formmethod="POST" formaction="/listings/<%= listing.id %>?_method=DELETE" class="delete-btn">Delete</button>
+            </form>
+        </div>
+    </div>
+</main>
+<%- include('../partials/footer.ejs') %>
