@@ -192,7 +192,9 @@ header img{
     border-radius: 40px;
     width: -webkit-fill-available;
 
-  }
+    
+}
+  
 nav{
     display: flex;
     white-space: nowrap;
