@@ -1,6 +1,7 @@
 // middleware/fileUpload.js
 import multer from 'multer';
 import crypto from 'crypto';
+import sharp from 'sharp';
 import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
@@ -53,12 +54,27 @@ export const fileUpload = (req, res, next) => {
       return next();
     }
 
+    // Generate random image name for S3
     const s3Key = `images/${randomImageName()}`;
 
+    // Resize image using Sharp
+    const buffer = await sharp(req.file.buffer)
+    .resize({
+      width: 1080,
+      height: 1080,
+      fit: 'contain',
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
+    .webp({
+      lossless: false,
+    })
+    .toBuffer();
+
+    // Create S3 upload parameters
     const params = {
       Bucket: bucketName,
       Key: s3Key,
-      Body: req.file.buffer,
+      Body: buffer,
       ContentType: req.file.mimetype,
     };
 
