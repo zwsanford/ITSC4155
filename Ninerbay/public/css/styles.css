@@ -753,9 +753,8 @@ footer p {
 
        .mov-signup1{
 
-        position:relative;
         bottom: 300px;
-        left: 170px;
+        left: 250px;
         width: 800px;
      
        }
@@ -792,4 +791,82 @@ footer p {
        }
      
 
+  }
+
+
+  @media(max-width: 1400px) {
+
+     
+    .mov-signup1{
+
+        position:relative;
+        bottom: 300px;
+        left: 250px;
+        width: 800px;
+     
+       }
+
+    
+  }
+
+
+  @media(max-width: 1300px) {
+
+     
+    .mov-signup1{
+
+        position:relative;
+        bottom: 300px;
+        left: 250px;
+        width: 800px;
+     
+       }
+
+    
+  }
+
+
+  @media(max-width: 1200px) {
+
+     
+    .mov-signup1{
+
+        position:relative;
+        bottom: 300px;
+        left: 250px;
+        width: 800px;
+     
+       }
+
+    
+  }
+
+  @media(max-width: 1100px) {
+
+     
+    .mov-signup1{
+
+        position:relative;
+        bottom: 300px;
+        left: 250px;
+        width: 800px;
+     
+       }
+
+    
+  }
+
+  @media(max-width: 1000px) {
+
+     
+    .mov-signup1{
+
+        position:relative;
+        bottom: 300px;
+        left: 168px;
+        width: 800px;
+     
+       }
+
+    
   }
