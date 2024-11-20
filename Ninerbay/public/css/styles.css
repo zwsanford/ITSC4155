@@ -76,6 +76,8 @@ header {
     width: auto;
 }
 
+
+
 .site-name {
     font-size: 1.5rem;
     font-weight: bold;
@@ -677,4 +679,47 @@ footer p {
     bottom: 125%;
     left: 50%;
     margin-left: -80px;
+  }
+   
+
+  @media(max-width: 1500px){
+
+       .search-input{
+
+        position: relative;
+        top: 10px;
+
+       }  
+
+       .mov-signup1{
+
+        position:relative;
+        right: 100px;
+        
+
+       }
+
+       .mov-signup2{
+
+        position: relative;
+        left: 100px;
+
+       }
+
+       .form-container-height{
+
+        height:447px; 
+        
+
+       }
+
+       .mov-submit{
+
+        position: relative;
+        bottom: 40px;
+        height: 50px;
+       
+       }
+     
+
   }

@@ -1,12 +1,12 @@
 <%- include('../partials/header.ejs') %>
 <main class="login-page">
-    <div class="form-container">
+    <div class="form-container mov-signup1 ">
         <h2>Login</h2>
     </div>
     <% if (errorMessages) { %>
         <div class="error"><%= errorMessages %></div>
     <% } %>
-    <form action="/accounts/login" method="POST" class="form-container">
+    <form action="/accounts/login" method="POST" class="form-container mov-signup2 form-container-height">
         <label for="username">Username</label>
         <input type="text" id="username" name="username" required>
 
