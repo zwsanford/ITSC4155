@@ -97,6 +97,8 @@ header {
     border-radius: 20px;
     border: 1px solid var(--clr-primary);
     font-size: 1rem;
+    position: relative;
+    top: 15px;
 }
 
 .nav-links ul {
@@ -287,7 +289,7 @@ main {
     background-color: var(--clr-primary);
     flex: 1;
     padding: 1rem;
-    display: flex;
+    /* display: flex; */
     justify-content: center;
     align-items: center;
 }
@@ -599,7 +601,7 @@ footer p {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 80vh;
+    min-height: 125vh;
     background-color: var(--clr-primary);
     color: var(--clr-white);
     padding: 2rem;
@@ -621,11 +623,14 @@ footer p {
     font-size: var(--fs-h3);
 }
 
+
+
 .signup-form label, .login-form label {
     font-size: var(--fs-h6);
     color: var(--clr-primary);
     display: block;
     margin-top: 1rem;
+    
 }
 
 .signup-form input, .login-form input {
@@ -637,7 +642,10 @@ footer p {
     font-size: var(--fs-h6);
     color: var(--clr-primary);
     background-color: var(--clr-white);
+    
 }
+
+
 
 .signup-form input:focus, .login-form input:focus {
     outline: 2px solid var(--clr-primary);
@@ -680,6 +688,58 @@ footer p {
     left: 50%;
     margin-left: -80px;
   }
+
+
+  
+  .mov-signup1{
+
+    position:relative;
+    bottom: 300px;
+    left: 250px;
+ 
+ 
+   }
+
+   .mov-signup2{
+
+    position:  relative;
+    right: 150px;
+    top: 100px;
+    
+
+   }
+
+   .form-container-height{
+
+    height:580px; 
+    padding: 80px;
+
+    
+
+   }
+
+   .mov-login-input{
+
+    position: relative;
+    top: 50px;
+
+   }
+
+
+  input[type = "file"]{
+
+    position: relative;
+    bottom: 0px;
+
+  }
+
+  #image {
+    display: inline-block;
+    width: 100%; /* Match the width of other inputs */
+    padding: 8px; /* Add padding to align visually */
+    box-sizing: border-box;
+  }
+
    
 
   @media(max-width: 1500px){
@@ -694,29 +754,39 @@ footer p {
        .mov-signup1{
 
         position:relative;
-        right: 100px;
-        
-
+        bottom: 300px;
+        left: 170px;
+        width: 800px;
+     
        }
-
+    
        .mov-signup2{
-
-        position: relative;
-        left: 100px;
-
+    
+        position:  relative;
+        right: 150px;
+        top: 100px;
+        
+    
        }
 
        .form-container-height{
 
-        height:447px; 
+        height:580px; 
+        padding: 80px;
         
+  
+       }
+
+       .form-container{
+
+
 
        }
 
        .mov-submit{
 
         position: relative;
-        bottom: 40px;
+        bottom: 0px;
         height: 50px;
        
        }
