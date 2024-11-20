@@ -742,7 +742,7 @@ footer p {
 
    
 
-  @media(max-width: 1500px){
+  @media(max-width: 100%){
 
        .search-input{
 
@@ -793,7 +793,7 @@ footer p {
 
   }
 
-
+/* 
   @media(max-width: 1400px) {
 
      
@@ -869,4 +869,4 @@ footer p {
        }
 
     
-  }
+  } */
