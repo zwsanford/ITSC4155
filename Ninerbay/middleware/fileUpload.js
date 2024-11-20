@@ -33,11 +33,11 @@ const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
-    const mimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    const mimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     if (mimeTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Invalid file type. Only JPEG, PNG, and GIF are allowed.'));
+      cb(new Error('Invalid file type. Only JPEG, PNG, GIF, and WEBP are allowed.'));
     }
   },
 }).single('image');
@@ -75,7 +75,7 @@ export const fileUpload = (req, res, next) => {
       Bucket: bucketName,
       Key: s3Key,
       Body: buffer,
-      ContentType: req.file.mimetype,
+      ContentType: 'image/webp',
     };
 
     try {
