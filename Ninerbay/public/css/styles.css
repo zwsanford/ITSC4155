@@ -601,7 +601,7 @@ footer p {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 125vh;
+    min-height: 80vh;
     background-color: var(--clr-primary);
     color: var(--clr-white);
     padding: 2rem;

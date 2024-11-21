@@ -12,12 +12,10 @@ router.get('/login',isGuest, controller.loginPage);
 
 router.get('/signup',isGuest, controller.signupPage);
 
-router.post('/',isGuest, validateSignUp, validateResult, controller.create);
+router.post('/',isGuest, validateSignUp, validateResult, controller.create, controller.login);
 
 router.post('/login',isGuest, validateResult, controller.login);
 
 router.get('/logout',isLoggedIn, controller.logout);
-
-
 
 export default router;

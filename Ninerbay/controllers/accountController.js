@@ -15,7 +15,8 @@ export const create = (req, res, next) => {
     account.save()
         .then(()=>{
             req.flash('success', 'Registration Succeeded!');
-            res.redirect('/accounts/login');
+            next();
+            // res.redirect('/accounts/login');
         })
         .catch(err => {
             if (err.name === 'ValidationError') {
@@ -55,7 +56,9 @@ export const logout = (req, res, next) => {
     req.session.destroy(err => {
         if (err) {
             next(err);
+            console.log('Error destroying session:', err);
         } else {
+            console.log('Session destroyed successfully');
             res.redirect('/');
         }
     });

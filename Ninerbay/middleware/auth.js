@@ -2,23 +2,23 @@ import Listing from '../models/listing.js';
 
 //check if user is a guest
 export const isGuest = (req, res, next)=>{
-    if(!req.session.account){
+    if(!req.session.user){
         return next();
     }
     else{
         req.flash('error', 'You are logged in already');
-        return res.redirect('/users/profile');
+        return res.redirect('/listings');
     }
 };
 
 //check if user is authenticated
 export const isLoggedIn = (req, res, next)=>{
-    if(req.session.account){
+    if(req.session.user){
         return next();
     }
     else{
         req.flash('error', 'You need to log in first!');
-        return res.redirect('/users/login');
+        return res.redirect('/accounts/login');
     }
 };
 

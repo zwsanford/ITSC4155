@@ -16,29 +16,10 @@ dotenv.config();
 //create app
 const app = express();
 
-// weiowoeiweioowieoiwe
-
-app.use(session({
-    secret: 'hghghghldodl', 
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: process.env.DATABASE_URL }),
-    cookie: { maxAge: 1000 * 60 * 60 } // 1 hour
-}));
-
-app.use(flash());
-
-app.use((req, res, next) => {
-    res.locals.user = req.session.user || null;
-    res.locals.errorMessages = req.flash('error');
-    res.locals.successMessages = req.flash('success');
-    next();
-});
-
-
 //configure app
 let port = 4000;
 let host = 'localhost';
+
 app.set('view engine', 'ejs');
 
 //connect to database
@@ -58,25 +39,29 @@ app.use(morgan('tiny'));
 app.use(methodOverride('_method'));
 
 
+app.use(session({
+    secret: 'hghghghldodl', 
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: process.env.DATABASE_URL }),
+    cookie: { maxAge: 1000 * 60 * 60 } // 1 hour
+}));
+
+app.use(flash());
+
+app.use((req, res, next) => {
+    res.locals.user = req.session.user || null;
+    res.locals.errorMessages = req.flash('error');
+    res.locals.successMessages = req.flash('success');
+    next();
+});
+
 //set up routes
 app.get('/', (req, res)=>{
     res.render('index');
 });
 
-app.get('/logout', (req, res, next) => {
-
-    req.session.destroy(err => {
-       if(err)
-         return next(err);
-        else 
-        res.redirect('/');
-    })
-  
-  });
-
-
 app.use('/listings', listingRoutes);
-
 app.use('/accounts', accountRoutes);
 
 
