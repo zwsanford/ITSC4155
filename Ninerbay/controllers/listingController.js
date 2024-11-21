@@ -189,7 +189,7 @@ export const deleteListing = async (req, res, next) => {
       if (listing) {
         if (listing.image && listing.image.s3Key) {
           await deleteFile(listing.image.s3Key);
-          req.flash('success', 'Your vinyl listing has successfully been deleted!');
+          req.flash('success', 'Your listing has successfully been deleted!');
         }     
         res.redirect('/listings');
       } else {
@@ -201,3 +201,26 @@ export const deleteListing = async (req, res, next) => {
       next(err);
     }
 }; 
+
+export const updateBid = async (req, res, next) => {
+  const id = req.params.id;
+  const bid = req.body.bid;
+  try {
+    // Fetch the listing by ID
+    const listing = await Listing.findById(id);
+    if (!listing) {
+      const err = new Error('Listing not found');
+      err.status = 404;
+      return next(err);
+    }
+
+    if (listing.bid < bid) {
+      await Listing.findByIdAndUpdate(id, bid, { new: true });
+    }
+  }
+  catch(err){
+    next(err);
+  }
+  // Redirect to the listing's page
+  res.redirect(`/listings/${id}`);
+};
