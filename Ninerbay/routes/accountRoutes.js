@@ -18,4 +18,6 @@ router.post('/login',isGuest, validateResult, controller.login);
 
 router.get('/logout',isLoggedIn, controller.logout);
 
+
+
 export default router;

@@ -1,10 +1,10 @@
 <%- include('../partials/header.ejs') %>
 <main class="signup-page">
-    <div class="form-container">
+    <div class="form-container mov-signup1">
         <h2>Sign Up</h2>
         
     </div>
-    <form action="/accounts" method="POST" class="form-container" >
+    <form action="/accounts" method="POST" class="form-container mov-signup2 form-container-height" >
         <label for="username">Username</label>
         <input type="text" id="username" name="username" required>
 
@@ -14,7 +14,7 @@
         <label for="password">Password</label>
         <input type="text" id="password" name="password" required>
 
-        <button type="submit" class="submit-btn">Submit</button>
+        <button type="submit" class="submit-btn mov-submit">Submit</button>
     </form>
 </main>
 <%- include('../partials/footer.ejs') %>

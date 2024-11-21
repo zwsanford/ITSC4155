@@ -16,6 +16,8 @@ dotenv.config();
 //create app
 const app = express();
 
+// weiowoeiweioowieoiwe
+
 app.use(session({
     secret: 'hghghghldodl', 
     resave: false,
@@ -60,6 +62,17 @@ app.use(methodOverride('_method'));
 app.get('/', (req, res)=>{
     res.render('index');
 });
+
+app.get('/logout', (req, res, next) => {
+
+    req.session.destroy(err => {
+       if(err)
+         return next(err);
+        else 
+        res.redirect('/');
+    })
+  
+  });
 
 
 app.use('/listings', listingRoutes);

@@ -76,6 +76,8 @@ header {
     width: auto;
 }
 
+
+
 .site-name {
     font-size: 1.5rem;
     font-weight: bold;
@@ -95,6 +97,8 @@ header {
     border-radius: 20px;
     border: 1px solid var(--clr-primary);
     font-size: 1rem;
+    position: relative;
+    top: 15px;
 }
 
 .nav-links ul {
@@ -285,7 +289,7 @@ main {
     background-color: var(--clr-primary);
     flex: 1;
     padding: 1rem;
-    display: flex;
+    /* display: flex; */
     justify-content: center;
     align-items: center;
 }
@@ -597,7 +601,7 @@ footer p {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 80vh;
+    min-height: 125vh;
     background-color: var(--clr-primary);
     color: var(--clr-white);
     padding: 2rem;
@@ -619,11 +623,14 @@ footer p {
     font-size: var(--fs-h3);
 }
 
+
+
 .signup-form label, .login-form label {
     font-size: var(--fs-h6);
     color: var(--clr-primary);
     display: block;
     margin-top: 1rem;
+    
 }
 
 .signup-form input, .login-form input {
@@ -635,7 +642,10 @@ footer p {
     font-size: var(--fs-h6);
     color: var(--clr-primary);
     background-color: var(--clr-white);
+    
 }
+
+
 
 .signup-form input:focus, .login-form input:focus {
     outline: 2px solid var(--clr-primary);
@@ -683,7 +693,6 @@ footer p {
     padding: 0.75rem 1.5rem;
     font-size: var(--fs-h6);
     color: var(--clr-white);
-    background-color: var(--clr-neutral);
     border: none;
     border-radius: 5px;
     cursor: pointer;
