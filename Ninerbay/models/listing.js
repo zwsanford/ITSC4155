@@ -23,6 +23,7 @@ const listingSchema = new Schema({
   },
   totalOffers: { type: Number, default: 0 },
   active: { type: Boolean, default: true },
+  bid: { type: Number, default: 0 }
 });
 
 export default mongoose.model('Listing', listingSchema);

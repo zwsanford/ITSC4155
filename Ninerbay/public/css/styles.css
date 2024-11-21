@@ -678,3 +678,14 @@ footer p {
     left: 50%;
     margin-left: -80px;
   }
+
+.auction{
+    padding: 0.75rem 1.5rem;
+    font-size: var(--fs-h6);
+    color: var(--clr-white);
+    background-color: var(--clr-neutral);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}

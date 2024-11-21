@@ -8,6 +8,7 @@ import {
     edit,
     update,
     deleteListing,
+    updateBid,
 }   from '../controllers/listingController.js';
 import { fileUpload } from '../middleware/fileUpload.js';
 
@@ -34,5 +35,7 @@ router.put('/:id', fileUpload, update);
 
 // Route to delete listing
 router.delete('/:id', deleteListing);
+
+router.put('/:id/updateBid', updateBid);
 
 export default router;
