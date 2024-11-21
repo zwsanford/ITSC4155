@@ -77,6 +77,12 @@ export const update = async (req, res, next) => {
     }
 
     // Update the listing document with new data
+    if(listing.bid < listingData.bid){
+      listingData.totalOffers = listing.totalOffers + 1;
+    }
+    else{
+      listingData.bid = listing.bid;
+    }
     await Listing.findByIdAndUpdate(id, listingData, { new: true });
     
     // Redirect to the listing's page

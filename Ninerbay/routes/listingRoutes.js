@@ -36,6 +36,6 @@ router.put('/:id', fileUpload, update);
 // Route to delete listing
 router.delete('/:id', deleteListing);
 
-router.put('/:id/updateBid', updateBid);
+router.put('/:id/updateBid', update);
 
 export default router;
