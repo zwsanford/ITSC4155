@@ -1,12 +1,15 @@
 <%- include('../partials/header.ejs') %>
 <main class="login-page">
-    <div class="form-container">
+    <div class="form-container mov-signup1 ">
         <h2>Login</h2>
     </div>
     <% if (errorMessages) { %>
         <div class="error"><%= errorMessages %></div>
     <% } %>
-    <form action="/accounts/login" method="POST" class="form-container">
+    <form action="/accounts/login" method="POST" class="form-container mov-signup2 form-container-height">
+       
+       <div class = "mov-login-input">
+        
         <label for="username">Username</label>
         <input type="text" id="username" name="username" required>
 
@@ -14,6 +17,9 @@
         <input type="text" id="password" name="password" required>
 
         <button type="submit" class="submit-btn">Submit</button>
+
+      </div>
+
     </form>
     <div class="popup" >
         <span class="popuptext" id="success">You are logged in</span>
