@@ -5,7 +5,7 @@ export const loginPage = (req, res) => {
 };
 
 export const signupPage = (req, res) => {
-    res.render('./user/signup');
+    res.render('./users/signup');
 };
 
 export const create = (req, res, next) => {
