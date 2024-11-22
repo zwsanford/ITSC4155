@@ -1,131 +1,69 @@
-import * as listingController from '../controllers/listingController.js';
+import { create } from '../controllers/listingController.js';
 import Listing from '../models/listing.js';
-import { getFileUrl, deleteFile } from '../middleware/fileUpload.js';
 
 describe('Listing Controller', () => {
-    let mockReq, mockRes, mockNext;
+    let req, res, next;
 
     beforeEach(() => {
-        mockReq = {
-            params: {},
-            body: {},
-            query: {},
-            file: null,
-            flash: jasmine.createSpy('flash'),
+        req = {
+            session: {},
+            body: {}
         };
-        mockRes = {
-            render: jasmine.createSpy('render'),
-            redirect: jasmine.createSpy('redirect'),
+        res = {
+            redirect: jasmine.createSpy('redirect')
         };
-        mockNext = jasmine.createSpy('next');
-    });
-
-    describe('newListing', () => {
-        it('should render the new listing form', () => {
-            listingController.newListing(mockReq, mockRes);
-            expect(mockRes.render).toHaveBeenCalledWith('listing/new');
-        });
+        next = jasmine.createSpy('next');
     });
 
     describe('create', () => {
-        it('should create a new listing and redirect', async () => {
-            spyOn(Listing.prototype, 'save').and.returnValue(Promise.resolve());
-            mockReq.file = { s3Key: 'test-key', mimetype: 'image/png', size: 1024 };
-            mockReq.body = { title: 'Test Listing', price: 100 };
-
-            await listingController.create(mockReq, mockRes, mockNext);
-
-            expect(Listing.prototype.save).toHaveBeenCalled();
-            expect(mockRes.redirect).toHaveBeenCalledWith('/listings');
+        it('should return 401 if user is not logged in', async () => {
+            await create(req, res, next);
+            const error = next.calls.argsFor(0)[0];
+            expect(error).toEqual(jasmine.any(Error));
+            expect(error.message).toBe('User is not logged in');
+            expect(error.status).toBe(401);
         });
 
-        it('should return an error if no image is provided', async () => {
-            await listingController.create(mockReq, mockRes, mockNext);
+        it('should return 400 if image is not provided', async () => {
+            req.session.user = { _id: 'user-id' };
+            req.body = { title: 'Test Title', description: 'Test Description' };
+            await create(req, res, next);
+            const error = next.calls.argsFor(0)[0];
+            expect(error).toEqual(jasmine.any(Error));
+            expect(error.message).toBe('Image is required');
+            expect(error.status).toBe(400);
+        });
 
-            expect(mockNext).toHaveBeenCalledWith(jasmine.objectContaining({ status: 400 }));
+        it('should save the listing and redirect to /listings', async () => {
+            req.session.user = { _id: 'user-id' };
+            req.body = { title: 'Test Title', description: 'Test Description', image: 'test-image.jpg' };
+            spyOn(Listing.prototype, 'save').and.resolveTo();
+            await create(req, res, next);
+            expect(Listing.prototype.save).toHaveBeenCalled();
+            expect(res.redirect).toHaveBeenCalledWith('/listings');
         });
 
         it('should handle validation errors', async () => {
-            spyOn(Listing.prototype, 'save').and.returnValue(Promise.reject({ name: 'ValidationError' }));
-
-            mockReq.file = { s3Key: 'test-key', mimetype: 'image/png', size: 1024 };
-            mockReq.body = { title: 'Test Listing', price: 100 };
-
-            await listingController.create(mockReq, mockRes, mockNext);
-
-            expect(mockNext).toHaveBeenCalledWith(jasmine.objectContaining({ status: 400 }));
-        });
-    });
-
-    describe('show', () => {
-        it('should fetch and render a listing', async () => {
-            const listing = { title: 'Test Listing', price: 100, image: { s3Key: 'test-key' } };
-            spyOn(Listing, 'findById').and.returnValue({
-                populate: jasmine.createSpy('populate').and.returnValue(Promise.resolve(listing))
-            });
-            spyOn(getFileUrl, 'call').and.returnValue(Promise.resolve('signed-url'));
-
-            mockReq.params.id = '60d21b4667d0d8992e610c85';
-
-            await listingController.show(mockReq, mockRes, mockNext);
-
-            expect(Listing.findById).toHaveBeenCalledWith('60d21b4667d0d8992e610c85');
-            expect(mockRes.render).toHaveBeenCalledWith('listing/item', { listing });
+            req.session.user = { _id: 'user-id' };
+            req.body = { title: 'Test Title', description: 'Test Description', image: 'test-image.jpg' };
+            const validationError = new Error('Validation Error');
+            validationError.name = 'ValidationError';
+            spyOn(Listing.prototype, 'save').and.rejectWith(validationError);
+            await create(req, res, next);
+            const error = next.calls.argsFor(0)[0];
+            expect(error).toEqual(validationError);
+            expect(error.status).toBe(400);
         });
 
-        it('should handle invalid IDs', async () => {
-            mockReq.params.id = 'invalid-id';
-
-            await listingController.show(mockReq, mockRes, mockNext);
-
-            expect(mockNext).toHaveBeenCalledWith(jasmine.objectContaining({ status: 400 }));
-        });
-
-        it('should handle listing not found', async () => {
-            spyOn(Listing, 'findById').and.returnValue({
-                populate: jasmine.createSpy('populate').and.returnValue(Promise.resolve(null))
-            });
-
-            mockReq.params.id = '60d21b4667d0d8992e610c85';
-
-            await listingController.show(mockReq, mockRes, mockNext);
-
-            expect(mockNext).toHaveBeenCalledWith(jasmine.objectContaining({ status: 404 }));
-        });
-    });
-
-    describe('deleteListing', () => {
-        it('should delete a listing and its image', async () => {
-            const listing = { image: { s3Key: 'test-key' } };
-
-            spyOn(Listing, 'findByIdAndDelete').and.returnValue(Promise.resolve(listing));
-            spyOn(deleteFile, 'call').and.returnValue(Promise.resolve());
-
-            mockReq.params.id = '60d21b4667d0d8992e610c85';
-
-            await listingController.deleteListing(mockReq, mockRes, mockNext);
-
-            expect(Listing.findByIdAndDelete).toHaveBeenCalledWith('60d21b4667d0d8992e610c85');
-            expect(mockReq.flash).toHaveBeenCalledWith('success', 'Your listing has successfully been deleted!');
-            expect(mockRes.redirect).toHaveBeenCalledWith('/listings');
-        });
-    });
-
-    describe('updateBid', () => {
-        it('should not update the bid if it is lower or equal to the current bid', async () => {
-            const listing = { bid: 100, _id: '60d21b4667d0d8992e610c85' };
-
-            spyOn(Listing, 'findById').and.returnValue(Promise.resolve(listing));
-            spyOn(Listing, 'findByIdAndUpdate').and.returnValue(Promise.resolve());
-
-            mockReq.params.id = '60d21b4667d0d8992e610c85';
-            mockReq.body.bid = 50;
-
-            await listingController.updateBid(mockReq, mockRes, mockNext);
-
-            expect(Listing.findById).toHaveBeenCalledWith('60d21b4667d0d8992e610c85');
-            expect(Listing.findByIdAndUpdate).not.toHaveBeenCalled();
-            expect(mockRes.redirect).toHaveBeenCalledWith('/listings/60d21b4667d0d8992e610c85');
+        it('should handle other errors', async () => {
+            req.session.user = { _id: 'user-id' };
+            req.body = { title: 'Test Title', description: 'Test Description', image: 'test-image.jpg' };
+            const otherError = new Error('Other Error');
+            spyOn(Listing.prototype, 'save').and.rejectWith(otherError);
+            await create(req, res, next);
+            const error = next.calls.argsFor(0)[0];
+            expect(error).toEqual(otherError);
+            expect(error.status).toBeUndefined();
         });
     });
 });

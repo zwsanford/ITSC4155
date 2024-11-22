@@ -45,7 +45,7 @@ export const update = async (req, res, next) => {
   // Check if the ID is valid
   if (!id.match(/^[0-9a-fA-F]{24}$/)) {
     const err = new Error('Invalid listing ID');
-    err.status = 400;
+    err.status = 401;
     return next(err);
   }
 
