@@ -16,66 +16,56 @@ export const isLoggedIn = (req, res, next) => {
         return next();
     } else {
         req.flash('error', 'You need to log in first!');
-        return res.redirect('/users/login'); // Fixed redirect path
+        return res.redirect('/users/login');
     }
 };
 
-// Check if user is the seller of the listing
-export const isSeller = async (req, res, next) => {
-    const { id } = req.params;
-
-    if (!req.session || !req.session.user) {
-        const err = new Error('User is not logged in');
-        err.status = 401;
-        return next(err);
-    }
-
-    try {
-        const listing = await Listing.findById(id);
-        if (!listing) {
-            const err = new Error('Listing not found');
-            err.status = 404;
+// Check if user is seller of the Item
+export const isSeller = (req, res, next) => {
+    let id = req.params.id;
+    Listing.findById(id)
+        .then(listing => {
+            if (listing) {
+                if (listing.seller == req.session.user) {
+                    return next();
+                } else {
+                    let err = new Error('Unauthorized to access the resource');
+                    err.status = 401;
+                    return next(err);
+                }
+            } else {
+                let err = new Error('Listing not found');
+                err.status = 404;
+                return next(err);
+            }
+        })
+        .catch(err => {
+            err.status = 500;
             return next(err);
-        }
-
-        if (listing.seller.equals(req.session.user._id)) {
-            return next();
-        } else {
-            const err = new Error('Unauthorized to access the resource');
-            err.status = 401;
-            return next(err);
-        }
-    } catch (err) {
-        next(err);
-    }
+        });
 };
 
-// Check if user is NOT the seller of the listing
-export const isNotSeller = async (req, res, next) => {
-    const { id } = req.params;
-
-    if (!req.session || !req.session.user) {
-        const err = new Error('User is not logged in');
-        err.status = 401;
-        return next(err);
-    }
-
-    try {
-        const listing = await Listing.findById(id);
-        if (!listing) {
-            const err = new Error('Listing not found');
-            err.status = 404;
+// Check if user is not the seller of the Item
+export const isNotSeller = (req, res, next) => {
+    let id = req.params.id;
+    Listing.findById(id)
+        .then(listing => {
+            if (listing) {
+                if (listing.seller != req.session.user) {
+                    return next();
+                } else {
+                    let err = new Error('Unauthorized to access the resource');
+                    err.status = 401;
+                    return next(err);
+                }
+            } else {
+                let err = new Error('Listing not found');
+                err.status = 404;
+                return next(err);
+            }
+        })
+        .catch(err => {
+            err.status = 500;
             return next(err);
-        }
-
-        if (!listing.seller.equals(req.session.user._id)) {
-            return next();
-        } else {
-            const err = new Error('Unauthorized to access the resource');
-            err.status = 401;
-            return next(err);
-        }
-    } catch (err) {
-        next(err);
-    }
+        });
 };

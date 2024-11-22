@@ -1,11 +1,11 @@
 import User from '../models/user.js';
 
 export const loginPage = (req, res) => {
-    res.render('./users/login');
+    res.render('./user/login');
 };
 
 export const signupPage = (req, res) => {
-    res.render('./users/signup');
+    res.render('./user/signup');
 };
 
 export const create = (req, res, next) => {
@@ -28,29 +28,29 @@ export const create = (req, res, next) => {
         });
 };
 
-export const login = async (req, res, next) => {
-    try {
-        const { username, password } = req.body;
-        const user = await User.findOne({ username });
+export const login = (req, res, next) => {
+    let { username, password } = req.body;
 
-        if (!user) {
-            req.flash('error', 'Invalid username or password');
-            return res.redirect('/users/login');
-        }
-
-        user.comparePassword(password, (err, isMatch) => {
-            if (err || !isMatch) {
-                req.flash('error', 'Invalid username or password');
-                return res.redirect('/users/login');
+    User.findOne({ username: username })
+        .then(user => {
+            if (user) {
+                user.comparePassword(password)
+                    .then(isMatch => {
+                        if (isMatch) {
+                            req.session.user = user._id;
+                            req.flash('success', 'You have successfully logged in!');
+                            res.redirect('/');
+                        } else {
+                            req.flash('error', 'Invalid username or password');
+                            res.redirect('/users/login');
+                        }                        
+                })
+            }else{
+                req.flash('error', 'Wrong email address!');
+                res.redirect('/users/login');
             }
-
-            req.session.user = user;
-            req.flash('success', 'You have successfully logged in!');
-            res.redirect('/');
-        });
-    } catch (err) {
-        next(err);
-    }
+        })
+        .catch(err => next(err));
 };
 
 export const logout = (req, res, next) => {
