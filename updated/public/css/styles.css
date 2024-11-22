@@ -341,6 +341,9 @@ footer p {
     background-color: #45a049;
 }
 
+.button-form{
+    display: contents;
+}
 .item-listings {
     max-height: fit-content;
     display: grid;
@@ -448,6 +451,7 @@ footer p {
     margin-top: 1.5rem;
     display: flex;
     gap: 1rem;
+    padding: 0.75rem 1.5rem;
 }
 
 .edit-btn, .delete-btn {
