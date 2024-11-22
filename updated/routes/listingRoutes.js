@@ -39,6 +39,6 @@ router.put('/:id', validateId, isLoggedIn, isSeller, fileUpload, validateListing
 router.delete('/:id', validateId, isLoggedIn, isSeller, deleteListing);
 
 //Route to update bid
-router.put('/:id/updateBid', validateId, isLoggedIn, updateBid);
+router.put('/:id/updateBid', validateId, isLoggedIn, update);
 
 export default router;

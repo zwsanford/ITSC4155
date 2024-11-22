@@ -76,9 +76,16 @@ export const update = async (req, res, next) => {
       };
     }
 
+    if (listingData.bid && listingData.bid > listing.bid) {
+      listingData.totalOffers = (listing.totalOffers || 0) + 1;
+  } else {
+      listingData.bid = listing.bid; // Retain the old bid if not higher
+  }
+
     // Update the listing document with new data
     await Listing.findByIdAndUpdate(id, listingData, { new: true });
     
+
     // Redirect to the listing's page
     res.redirect(`/listings/${id}`);
   } catch (err) {
@@ -109,7 +116,6 @@ export const create = async (req, res, next) => {
     listingData.active = listingData.active === 'true' || listingData.active === true;
     
     listingData.seller = req.session.user;
-    console.log("LISTING DATA:", listingData);
 
     const listing = new Listing(listingData);
     await listing.save();
