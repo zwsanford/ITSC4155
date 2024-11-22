@@ -38,63 +38,6 @@ export const index = async (req, res, next) => {
     }
   };
 
-// update listing with image upload
-export const update = async (req, res, next) => {
-  const id = req.params.id;
-  
-  // Check if the ID is valid
-  if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-    const err = new Error('Invalid listing ID');
-    err.status = 400;
-    return next(err);
-  }
-
-  try {
-    // Fetch the listing document by ID
-    const listing = await Listing.findById(id);
-    if (!listing) {
-      const err = new Error('Listing not found');
-      err.status = 404;
-      return next(err);
-    }
-
-    // Prepare the updated listing data
-    const listingData = { ...req.body };
-
-    // Update image if a new file is uploaded
-    if (req.file && req.file.s3Key) {
-      // Delete the old image from S3
-      if (listing.image && listing.image.s3Key) {
-        await deleteFile(listing.image.s3Key);
-      }
-
-      // Set the new image data
-      listingData.image = {
-        s3Key: req.file.s3Key,
-        format: req.file.mimetype.split('/')[1],
-        size: req.file.size,
-      };
-    }
-
-    // Update the listing document with new data
-    if(listing.bid < listingData.bid){
-      listingData.totalOffers = listing.totalOffers + 1;
-    }
-    else{
-      listingData.bid = listing.bid;
-    }
-    await Listing.findByIdAndUpdate(id, listingData, { new: true });
-    
-    // Redirect to the listing's page
-    res.redirect(`/listings/${id}`);
-  } catch (err) {
-    if (err.name === 'ValidationError') {
-      err.status = 400;
-    }
-    next(err);
-  }
-};
-
 // create new listing with image upload
 export const create = async (req, res, next) => {
   try {
@@ -206,27 +149,79 @@ export const deleteListing = async (req, res, next) => {
     } catch (err) {
       next(err);
     }
-}; 
+};
+
+export const update = async (req, res, next) => {
+  const id = req.params.id;
+
+  if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      const err = new Error('Invalid listing ID');
+      err.status = 400;
+      return next(err);
+  }
+
+  try {
+      const listing = await Listing.findById(id);
+      if (!listing) {
+          const err = new Error('Listing not found');
+          err.status = 404;
+          return next(err);
+      }
+
+      const listingData = { ...req.body };
+
+      if (req.file && req.file.s3Key) {
+          if (listing.image && listing.image.s3Key) {
+              await deleteFile(listing.image.s3Key);
+          }
+          listingData.image = {
+              s3Key: req.file.s3Key,
+              format: req.file.mimetype.split('/')[1],
+              size: req.file.size,
+          };
+      }
+
+      if (listingData.bid && listingData.bid > listing.bid) {
+          listingData.totalOffers = (listing.totalOffers || 0) + 1;
+      } else {
+          listingData.bid = listing.bid; // Retain the old bid if not higher
+      }
+
+      await Listing.findByIdAndUpdate(id, listingData, { new: true });
+
+      res.redirect(`/listings/${id}`);
+  } catch (err) {
+      if (err.name === 'ValidationError') {
+          err.status = 400;
+      }
+      next(err);
+  }
+};
 
 export const updateBid = async (req, res, next) => {
   const id = req.params.id;
   const bid = req.body.bid;
-  try {
-    // Fetch the listing by ID
-    const listing = await Listing.findById(id);
-    if (!listing) {
-      const err = new Error('Listing not found');
-      err.status = 404;
-      return next(err);
-    }
 
-    if (listing.bid < bid) {
-      await Listing.findByIdAndUpdate(id, bid, { new: true });
-    }
+  if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      const err = new Error('Invalid listing ID');
+      err.status = 400;
+      return next(err);
   }
-  catch(err){
-    next(err);
+
+  try {
+      const listing = await Listing.findById(id);
+      if (!listing) {
+          const err = new Error('Listing not found');
+          err.status = 404;
+          return next(err);
+      }
+
+      if (bid > listing.bid) {
+          await Listing.findByIdAndUpdate(id, { bid }, { new: true });
+      }
+
+      res.redirect(`/listings/${id}`);
+  } catch (err) {
+      next(err);
   }
-  // Redirect to the listing's page
-  res.redirect(`/listings/${id}`);
 };
