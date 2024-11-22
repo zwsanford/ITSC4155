@@ -15,7 +15,7 @@ const bucketRegion = process.env.BUCKET_REGION;
 const accessKey = process.env.ACCESS_KEY;
 const secretAccessKey = process.env.SECRET_ACCESS_KEY;
 
-const randomImageName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
+export const randomImageName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
 
 // Initialize S3 client
 const s3 = new S3Client({

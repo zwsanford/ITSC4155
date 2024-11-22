@@ -1,5 +1,5 @@
-import Account from '../models/account.js';
-import * as accountController from '../controllers/accountController.js';
+import Account from '../models/user.js';
+import * as accountController from '../controllers/userController.js';
 
 describe('Account Controller', () => {
     let mockReq, mockRes, mockNext;
