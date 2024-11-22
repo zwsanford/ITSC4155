@@ -1,7 +1,7 @@
 import User from '../models/user.js';
 
 export const loginPage = (req, res) => {
-    res.render('./user/login');
+    res.render('./users/login');
 };
 
 export const signupPage = (req, res) => {
@@ -35,13 +35,13 @@ export const login = async (req, res, next) => {
 
         if (!user) {
             req.flash('error', 'Invalid username or password');
-            return res.redirect('/accounts/login');
+            return res.redirect('/users/login');
         }
 
         user.comparePassword(password, (err, isMatch) => {
             if (err || !isMatch) {
                 req.flash('error', 'Invalid username or password');
-                return res.redirect('/accounts/login');
+                return res.redirect('/users/login');
             }
 
             req.session.user = user;

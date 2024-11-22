@@ -16,7 +16,7 @@ export const isLoggedIn = (req, res, next) => {
         return next();
     } else {
         req.flash('error', 'You need to log in first!');
-        return res.redirect('/accounts/login'); // Fixed redirect path
+        return res.redirect('/users/login'); // Fixed redirect path
     }
 };
 

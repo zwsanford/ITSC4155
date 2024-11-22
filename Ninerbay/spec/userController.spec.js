@@ -53,7 +53,7 @@ describe('Account Controller', () => {
             spyOn(User, 'findOne').and.resolveTo(user);
             await accountController.login(req, res, next);
             expect(req.flash).toHaveBeenCalledWith('error', 'Invalid username or password');
-            expect(res.redirect).toHaveBeenCalledWith('/accounts/login');
+            expect(res.redirect).toHaveBeenCalledWith('/users/login');
         });
     
         it('should log in a user with valid credentials', async () => {

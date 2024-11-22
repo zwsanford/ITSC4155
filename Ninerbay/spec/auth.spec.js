@@ -37,10 +37,10 @@ describe('Auth Middleware', () => {
             expect(next).toHaveBeenCalled();
         });
 
-        it('should redirect to /accounts/login if user is not logged in', () => {
+        it('should redirect to /users/login if user is not logged in', () => {
             isLoggedIn(req, res, next);
             expect(req.flash).toHaveBeenCalledWith('error', 'You need to log in first!');
-            expect(res.redirect).toHaveBeenCalledWith('/accounts/login');
+            expect(res.redirect).toHaveBeenCalledWith('/users/login');
         });
     });
 
