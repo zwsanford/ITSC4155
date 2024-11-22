@@ -28,29 +28,29 @@ export const create = (req, res, next) => {
         });
 };
 
-export const login = (req, res, next) => {
-    let { username, password } = req.body;
+export const login = async (req, res, next) => {
+    try {
+        const { username, password } = req.body;
+        const user = await User.findOne({ username });
 
-    User.findOne({ username: username })
-        .then(user => {
-            if (user) {
-                user.comparePassword(password)
-                    .then(isMatch => {
-                        if (isMatch) {
-                            req.session.user = user._id;
-                            req.flash('success', 'You have successfully logged in!');
-                            res.redirect('/');
-                        } else {
-                            req.flash('error', 'Invalid username or password');
-                            res.redirect('/users/login');
-                        }                        
-                })
-            }else{
-                req.flash('error', 'Wrong email address!');
-                res.redirect('/users/login');
+        if (!user) {
+            req.flash('error', 'Invalid username or password');
+            return res.redirect('/accounts/login');
+        }
+
+        user.comparePassword(password, (err, isMatch) => {
+            if (err || !isMatch) {
+                req.flash('error', 'Invalid username or password');
+                return res.redirect('/accounts/login');
             }
-        })
-        .catch(err => next(err));
+
+            req.session.user = user;
+            req.flash('success', 'You have successfully logged in!');
+            res.redirect('/');
+        });
+    } catch (err) {
+        next(err);
+    }
 };
 
 export const logout = (req, res, next) => {

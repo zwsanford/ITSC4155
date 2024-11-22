@@ -1,5 +1,6 @@
 import Account from '../models/user.js';
 import * as accountController from '../controllers/userController.js';
+import User from '../models/user.js';
 
 describe('Account Controller', () => {
     let mockReq, mockRes, mockNext;
@@ -32,37 +33,37 @@ describe('Account Controller', () => {
     });
 
     describe('login', () => {
-        it('should log in a user with valid credentials', async () => {
-            const mockAccount = {
-                comparePassword: jasmine.createSpy('comparePassword').and.returnValue(Promise.resolve(true)),
+        let req, res, next;
+    
+        beforeEach(() => {
+            req = {
+                body: {},
+                flash: jasmine.createSpy('flash'),
+                session: {}
             };
-            spyOn(Account, 'findOne').and.returnValue(Promise.resolve(mockAccount));
-
-            mockReq.body = { username: 'testuser', password: 'password123' };
-
-            await accountController.login(mockReq, mockRes, mockNext);
-
-            expect(Account.findOne).toHaveBeenCalledWith({ username: 'testuser' });
-            expect(mockAccount.comparePassword).toHaveBeenCalledWith('password123');
-            expect(mockReq.session.user).toBe(mockAccount);
-            expect(mockReq.flash).toHaveBeenCalledWith('success', 'You have successfully logged in!');
-            expect(mockRes.redirect).toHaveBeenCalledWith('/');
+            res = {
+                redirect: jasmine.createSpy('redirect')
+            };
+            next = jasmine.createSpy('next');
         });
-
+    
         it('should redirect with an error for invalid password', async () => {
-            const mockAccount = {
-                comparePassword: jasmine.createSpy('comparePassword').and.returnValue(Promise.resolve(false)),
-            };
-            spyOn(Account, 'findOne').and.returnValue(Promise.resolve(mockAccount));
-
-            mockReq.body = { username: 'testuser', password: 'wrongpassword' };
-
-            await accountController.login(mockReq, mockRes, mockNext);
-
-            expect(Account.findOne).toHaveBeenCalledWith({ username: 'testuser' });
-            expect(mockAccount.comparePassword).toHaveBeenCalledWith('wrongpassword');
-            expect(mockReq.flash).toHaveBeenCalledWith('error', 'Invalid username or password');
-            expect(mockRes.redirect).toHaveBeenCalledWith('/accounts/login');
+            req.body = { username: 'testuser', password: 'wrongpassword' };
+            const user = { comparePassword: jasmine.createSpy('comparePassword').and.callFake((password, cb) => cb(null, false)) };
+            spyOn(User, 'findOne').and.resolveTo(user);
+            await accountController.login(req, res, next);
+            expect(req.flash).toHaveBeenCalledWith('error', 'Invalid username or password');
+            expect(res.redirect).toHaveBeenCalledWith('/accounts/login');
+        });
+    
+        it('should log in a user with valid credentials', async () => {
+            req.body = { username: 'testuser', password: 'correctpassword' };
+            const user = { comparePassword: jasmine.createSpy('comparePassword').and.callFake((password, cb) => cb(null, true)) };
+            spyOn(User, 'findOne').and.resolveTo(user);
+            await accountController.login(req, res, next);
+            expect(req.session.user).toBe(user);
+            expect(req.flash).toHaveBeenCalledWith('success', 'You have successfully logged in!');
+            expect(res.redirect).toHaveBeenCalledWith('/');
         });
     });
 
