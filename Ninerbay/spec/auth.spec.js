@@ -32,7 +32,6 @@ describe('Auth Middleware', () => {
             const res = mockRes();
 
             isLoggedIn(req, res, mockNext);
-
             expect(res.redirect).toHaveBeenCalledWith('/users/login');
         });
     });
@@ -75,6 +74,7 @@ describe('Auth Middleware', () => {
             await isSeller(req, res, mockNext);
 
             const error = mockNext.calls.argsFor(0)[0];
+
             expect(error).toEqual(jasmine.any(Error));
             expect(error.message).toBe('Unauthorized to access the resource');
             expect(error.status).toBe(401);
