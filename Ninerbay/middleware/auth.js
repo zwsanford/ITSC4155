@@ -22,39 +22,44 @@ export const isLoggedIn = (req, res, next)=>{
     }
 };
 
-//check if user is seller of the vinyl
-export const isSeller = (req, res, next) =>{
+export const isSeller = (req, res, next) => {
     let id = req.params.id;
     Listing.findById(id)
-    .then(listing=>{
-        if(listing){
-            if(listing.seller == req.session.account){
+        .then(listing => {
+            if (!listing) {
+                const err = new Error('Listing not found');
+                err.status = 404;
+                return next(err);
+            }
+
+            if (listing.seller == req.session.account) {
                 return next();
-            }else{
-                let err = new Error('Unauthorized to access the resource');
+            } else {
+                const err = new Error('Unauthorized to access the resource');
                 err.status = 401;
                 return next(err);
             }
-        }
-    })
-    .catch(err=>next(err));
-    
+        })
+        .catch(err => next(err));
 };
 
-export const isNotSeller = (req, res, next) =>{
+export const isNotSeller = (req, res, next) => {
     let id = req.params.id;
     Listing.findById(id)
-    .then(listing=>{
-        if(listing){
-            if(listing.seller != req.session.account){
+        .then(listing => {
+            if (!listing) {
+                const err = new Error('Listing not found');
+                err.status = 404;
+                return next(err);
+            }
+
+            if (listing.seller != req.session.account) {
                 return next();
-            }else{
-                let err = new Error('Unauthorized to access the resource');
+            } else {
+                const err = new Error('Unauthorized to access the resource');
                 err.status = 401;
                 return next(err);
             }
-        }
-    })
-    .catch(err=>next(err));
-    
+        })
+        .catch(err => next(err));
 };

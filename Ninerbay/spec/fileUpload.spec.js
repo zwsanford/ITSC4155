@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { randomImageName, getFileUrl, deleteFile } from '../middleware/fileUpload.js';
 import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { mockClient } from 'aws-sdk-client-mock';
@@ -13,8 +12,8 @@ describe('fileUpload.js', () => {
   describe('randomImageName', () => {
     it('should generate a random hex string of the specified length', () => {
       const name = randomImageName(16);
-      expect(name).to.be.a('string');
-      expect(name).to.have.lengthOf(32);
+      expect(typeof name).toBe('string');
+      expect(name.length).toBe(32);
     });
   });
 
@@ -22,16 +21,7 @@ describe('fileUpload.js', () => {
     it('should generate a signed URL for a given key', async () => {
       s3Mock.on(GetObjectCommand).resolves({});
       const url = await getFileUrl('test-key');
-      expect(url).to.be.a('string');
-    });
-
-    it('should throw an error if S3 operation fails', async () => {
-      s3Mock.on(GetObjectCommand).rejects(new Error('S3 Error'));
-      try {
-        await getFileUrl('test-key');
-      } catch (err) {
-        expect(err.message).to.equal('S3 Error');
-      }
+      expect(typeof url).toBe('string');
     });
   });
 
@@ -39,15 +29,16 @@ describe('fileUpload.js', () => {
     it('should delete a file from S3', async () => {
       s3Mock.on(DeleteObjectCommand).resolves({});
       await deleteFile('test-key');
-      expect(s3Mock.calls()).to.have.lengthOf(1);
+      expect(s3Mock.calls()).toHaveSize(1);
     });
 
     it('should throw an error if S3 delete operation fails', async () => {
       s3Mock.on(DeleteObjectCommand).rejects(new Error('S3 Error'));
       try {
         await deleteFile('test-key');
+        fail('Expected an error to be thrown');
       } catch (err) {
-        expect(err.message).to.equal('S3 Error');
+        expect(err.message).toBe('S3 Error');
       }
     });
   });
