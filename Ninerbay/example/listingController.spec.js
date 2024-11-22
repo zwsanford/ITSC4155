@@ -60,7 +60,9 @@ describe('Listing Controller', () => {
     describe('show', () => {
         it('should fetch and render a listing', async () => {
             const listing = { title: 'Test Listing', price: 100, image: { s3Key: 'test-key' } };
-            spyOn(Listing, 'findById').and.returnValue(Promise.resolve(listing));
+            spyOn(Listing, 'findById').and.returnValue({
+                populate: jasmine.createSpy('populate').and.returnValue(Promise.resolve(listing))
+            });
             spyOn(getFileUrl, 'call').and.returnValue(Promise.resolve('signed-url'));
 
             mockReq.params.id = '60d21b4667d0d8992e610c85';
@@ -80,7 +82,9 @@ describe('Listing Controller', () => {
         });
 
         it('should handle listing not found', async () => {
-            spyOn(Listing, 'findById').and.returnValue(Promise.resolve(null));
+            spyOn(Listing, 'findById').and.returnValue({
+                populate: jasmine.createSpy('populate').and.returnValue(Promise.resolve(null))
+            });
 
             mockReq.params.id = '60d21b4667d0d8992e610c85';
 
@@ -95,7 +99,6 @@ describe('Listing Controller', () => {
             const listing = { image: { s3Key: 'test-key' } };
 
             spyOn(Listing, 'findByIdAndDelete').and.returnValue(Promise.resolve(listing));
-
             spyOn(deleteFile, 'call').and.returnValue(Promise.resolve());
 
             mockReq.params.id = '60d21b4667d0d8992e610c85';
@@ -106,23 +109,23 @@ describe('Listing Controller', () => {
             expect(mockReq.flash).toHaveBeenCalledWith('success', 'Your listing has successfully been deleted!');
             expect(mockRes.redirect).toHaveBeenCalledWith('/listings');
         });
-    });    
+    });
 
     describe('updateBid', () => {
         it('should not update the bid if it is lower or equal to the current bid', async () => {
             const listing = { bid: 100, _id: '60d21b4667d0d8992e610c85' };
-    
+
             spyOn(Listing, 'findById').and.returnValue(Promise.resolve(listing));
             spyOn(Listing, 'findByIdAndUpdate').and.returnValue(Promise.resolve());
-    
+
             mockReq.params.id = '60d21b4667d0d8992e610c85';
             mockReq.body.bid = 50;
-    
+
             await listingController.updateBid(mockReq, mockRes, mockNext);
-    
+
             expect(Listing.findById).toHaveBeenCalledWith('60d21b4667d0d8992e610c85');
             expect(Listing.findByIdAndUpdate).not.toHaveBeenCalled();
             expect(mockRes.redirect).toHaveBeenCalledWith('/listings/60d21b4667d0d8992e610c85');
         });
-    });    
+    });
 });
