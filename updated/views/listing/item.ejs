@@ -24,12 +24,14 @@
             </form>
         </div>
 
+        <%if(user == listing.seller._id){%>
         <div class="button-group">
             <form>
                 <button type="submit" formmethod="GET" formaction="/listings/<%= listing.id %>/edit" class="edit-btn">Edit</button>
                 <button type="submit" formmethod="POST" formaction="/listings/<%= listing.id %>?_method=DELETE" class="delete-btn">Delete</button>
             </form>
         </div>
+        <%}%>
     </div>
 </main>
 <%- include('../partials/footer.ejs') %>
