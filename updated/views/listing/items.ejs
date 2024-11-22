@@ -1,0 +1,25 @@
+<%- include('../partials/header.ejs') %>
+<main class="item-listings">
+    <% if (listings.length) { %>
+        <% listings.forEach(listing => { %>
+            <div class="item card">
+                <a href="/listings/<%= listing.id %>">
+                    <% if (listing.imageUrl) { %>
+                        <img src="<%= listing.imageUrl %>" alt="<%= listing.title %> image" class="item-image">
+                    <% } else { %>
+                        <p>No image available</p>
+                    <% } %>
+                    <div class="item-info">
+                        <h4><%= listing.title %></h4>
+                        <p><%= listing.condition %></p>
+                        <h4>$<%= listing.price %></h4>
+                        <p><%= listing.totalOffers %> offers</p>
+                    </div>
+                </a>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <p>There are no listings to display.</p>
+    <% } %>
+</main>
+<%- include('../partials/footer.ejs') %>

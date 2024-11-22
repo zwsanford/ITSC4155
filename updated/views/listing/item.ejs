@@ -1,0 +1,35 @@
+<%- include('../partials/header.ejs') %>
+<main class="item-details container">
+    <div class="item-image">
+        <% if (listing.image && listing.image.url) { %>
+            <img src="<%= listing.image.url %>" alt="<%= listing.title %> image" class="item-photo">
+        <% } else { %>
+            <p>No image available</p>
+        <% } %>
+    </div>
+
+    <div class="item-info">
+        <!-- <%= console.log("Listing in Item" + listing) %> -->
+        <h2><%= listing.title %></h2>
+        <p><strong>Condition:</strong> <%= listing.condition %></p>
+        <p><strong>Price:</strong> $<%= listing.price %> | <%= listing.totalOffers %> offers</p>
+        <p><strong>Seller:</strong> <%= listing.seller.username %></p>
+        <p><%= listing.details %></p>
+        <p><strong>Current Bid: </strong>$<%= listing.bid %></p>
+
+        <div class="auction">
+            <form>
+                <input type="number" id="bid" name="bid" placeholder="Enter your bid" required>
+                <button type="submit" formmethod="POST" formaction="/listings/<%= listing.id %>/updateBid?_method=PUT" class="bid-btn">Enter Bid</button>
+            </form>
+        </div>
+
+        <div class="button-group">
+            <form>
+                <button type="submit" formmethod="GET" formaction="/listings/<%= listing.id %>/edit" class="edit-btn">Edit</button>
+                <button type="submit" formmethod="POST" formaction="/listings/<%= listing.id %>?_method=DELETE" class="delete-btn">Delete</button>
+            </form>
+        </div>
+    </div>
+</main>
+<%- include('../partials/footer.ejs') %>
