@@ -34,14 +34,14 @@ export const validateListing = [
     body('condition', 'Condition must be valid').notEmpty().trim().escape().isIn(['New', 'Like New', 'Good', 'Fair', 'Poor']),
     body('price', 'Price must be numeric and greater than or equal to 0').notEmpty().trim().escape().isNumeric({ min: 0 }),
     body('details', 'Details must not be empty').notEmpty().trim().escape(),
-    body('image', 'Image must be uploaded').custom((value, { req }) => {
-        if (!req.file || !req.file.s3Key) {
-          throw new Error('Image is required');
+    // Remove or modify image validation for updates
+    body('image').custom((value, { req }) => {
+        if (req.method === 'POST' && (!req.file || !req.file.s3Key)) {
+            throw new Error('Image is required for new listings');
         }
         return true;
-      }),
-    body('totalOffers', 'Total offers must be valid').trim().escape(),
-    body('active', 'Active status must be valid').trim().escape(),
-    body('bid', 'Highest bid must be numeric and greater than or equal to 0')
-    .optional()
-    .isNumeric({ min: 0 }),];
+    }),
+    body('totalOffers', 'Total offers must be valid').optional().trim().escape(),
+    body('active', 'Active status must be valid').optional().trim().escape(),
+    body('bid', 'Highest bid must be numeric and greater than or equal to 0').optional().isNumeric({ min: 0 })
+];

@@ -21,9 +21,6 @@
         <label for="details">Details:</label>
         <textarea id="details" name="details" rows="4" required><%= listing.details %></textarea>
 
-        <label for="seller">Seller:</label>
-        <input type="text" id="seller" name="seller" value="<%= listing.seller %>" required>
-
         <label for="image">Current Image:</label>
         <div class="current-image">
             <% if (listing.imageUrl) { %>
